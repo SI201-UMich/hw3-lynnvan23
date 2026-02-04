@@ -1,12 +1,11 @@
-# Name:
-# Student ID:
-# Email:
-# Who or what you worked with on this homework (including generative AI like ChatGPT):
+# Name: Lynn Van
+# Student ID: 15287597
+# Email: lynnvan@umich.edu
+# Who or what you worked with on this homework (including generative AI like ChatGPT): ChatGPT
 # If you worked with generative AI also add a statement for how you used it.
-# e.g.:
-# Asked ChatGPT hints for debugging and suggesting the general structure of the code
+# e.g.: Asked ChatGPT hints for debugging and suggesting the general structure of the code: I used it in order to correct mistakes or explain parts of the code to me that it generated and why it would work in the code.
 # Did your use of GenAI on this assignment align with your goals and guidelines in 
-#    your Gen AI contract? If not, why?
+#    your Gen AI contract? If not, why? Yes, my goals and guidelines aligned with this assignment because I tried everything first and only turned to GenAI when I got stuck and needed it to explain the code to me.
 
 import random
 import io
@@ -28,11 +27,15 @@ class CouponDispenser:
     def __init__(self, coupon_cards):
         """
         Initialize a new CouponDispenser object.
-
+        
         Args:
             coupon_cards (list[str]): list of possible coupons users can receive.
         """
         # TODO: Implement per instructions
+        self.coupon_cards = coupon_cards
+        self.customer_roster = []
+        self.issued_indices = []
+
         pass
 
     def __str__(self):
@@ -44,6 +47,9 @@ class CouponDispenser:
             str
         """
         # TODO: Implement per instructions
+        if len(self.coupon_cards) == 0:
+            return ""
+        return "|".join(self.coupon_cards)
         pass
 
     def issue_coupon(self, name):
@@ -61,6 +67,19 @@ class CouponDispenser:
             str: message as described above
         """
         # TODO: Implement per instructions
+        self.name = name
+        if len(self.coupon_cards) == 0:
+            return "The box is empty."
+        
+        if name in self.customer_roster:
+            index = self.customer_roster.index(name)
+            coupon = self.coupon_cards[self.issued_indices[index]]
+            return f"That name already has a coupon: {coupon}"
+        
+        coupon_index = random.randint(0, len(self.coupon_cards) - 1)
+        self.customer_roster.append(name)
+        self.issued_indices.append(coupon_index)
+        return self.coupon_cards[coupon_index]
         pass
 
     def distribute_session(self):
@@ -79,6 +98,28 @@ class CouponDispenser:
         Reminder: Use lists only (no dictionaries).
         """
         # TODO: Implement per instructions 
+        round_number = 1
+        while True:
+            user_input = input(f"Round {round_number} - Enter a name (or a comma-separated list), or type 'show' or 'exit': ")
+            if user_input == "exit":
+                print("Goodbye!")
+                break
+
+            elif user_input == "show":
+                for i in range(len(self.customer_roster)):
+                    name = self.customer_roster[i]
+                    coupon = self.coupon_cards[self.issued_indices[i]]
+                    print(f"{name}: {coupon}")
+
+            else:
+                names = user_input.split(",")
+                for name in names:
+                    name = name.strip()
+                    if name != "":
+                        coup = self.issue_coupon(name)
+                        print(coup)
+
+                round_number += 1
         pass
 
     def tally_distribution(self):
@@ -97,6 +138,16 @@ class CouponDispenser:
             None
         """
         # TODO: Implement per instructions
+        if len(self.issued_indices) == 0:
+            print("Empty")
+            return
+        for i in range(len(self.coupon_cards)):
+            count = 0
+            for issued in self.issued_indices:
+                if issued == i:
+                    count += 1
+            print(f"{self.coupon_cards[i]} distribution count: {count}")
+
         pass
 
 
@@ -116,9 +167,9 @@ def main():
     ]
 
     # Uncomment the lines below as you implement each function.
-    # box = CouponDispenser(coupon_cards)
-    # box.distribute_session()
-    # box.tally_distribution()
+    box = CouponDispenser(coupon_cards)
+    box.distribute_session()
+    box.tally_distribution()
     pass
 
 
